@@ -23,7 +23,14 @@ class App extends Component {
       imageUrl: '',
       box: {},
       route: 'signin',
-      isSignedIn: false
+      isSignedIn: false,
+      user: {
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: null
+      }
     }
 
     this.particlesParams = {
@@ -40,7 +47,7 @@ class App extends Component {
   }
 
   render() {
-    const { isSignedIn, imageUrl, route, box } = this.state;
+    const { isSignedIn, imageUrl, route, box, user } = this.state;
     return (
       <div className="App">
         <Particles className='particles' params={this.particlesParams} />
@@ -49,7 +56,7 @@ class App extends Component {
           route === 'home' 
           ? <div>
             <Logo />
-            <Rank />
+            <Rank name={user.name} entries={user.entries} />
             <ImageLinkForm 
               onInputChange={this.onInputChange}
               onButttonSubmit={this.onButttonSubmit}
@@ -58,18 +65,12 @@ class App extends Component {
           </ div>           
           : (
             route === 'signin'
-            ? <SignIn onRouteChange={this.onRouteChange}/>
-            : <Register onRouteChange={this.onRouteChange} />
+            ? <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+            : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
           )
         }
       </div>
     );
-  }
-
-  componentDidMount() {
-    fetch('https://localhost:3000')
-      .then(response => response.json())
-      .then(console.log);
   }
 
   calculateFaceLocation = (regions) => {
@@ -114,6 +115,17 @@ class App extends Component {
     this.setState({ route: route });
   }
 
+  loadUser = (user) => {
+    this.setState({
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        entries: user.entries,
+        joined: user.joined
+      }
+    })
+  }
   
 }
 
